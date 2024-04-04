@@ -11,18 +11,15 @@ module.exports = (sequelize,DataTypes)=>{
             autoIncrement:true
         },
         
-        author:{
-            type:DataTypes.STRING
-
-        },
-
         title:{
-            type:DataTypes.STRING
+            type:DataTypes.STRING,
+            allowNull: false,
+
         },
 
         content:{
-            type: DataTypes.STRING,
-            allowNull:false,
+            type: DataTypes.TEXT,
+            allowNull: false,
             validate:{
                 notEmpty:true
             }

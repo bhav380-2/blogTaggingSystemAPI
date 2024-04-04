@@ -10,14 +10,13 @@ module.exports = (sequelize,DataTypes)=>{
             allowNull:false,
             autoIncrement:true
         },
-        
 
-        name:{
-            type:DataTypes.STRING
+        tagName:{
+            type:DataTypes.STRING,
+            allowNull: false,
+            unique: true
         },
 
-
-     
     });
 
     console.log("tagmodel")

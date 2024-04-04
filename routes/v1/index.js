@@ -2,8 +2,16 @@ const express = require("express");
 const router = express.Router();
 
 
-router.use('/post',require('./post'));
+const UserController = require('../../controllers/User');
+
+const userController = new UserController();
+
+
+router.use('/blog',require('./blog'));
 router.use('/tag',require('./tag'));
+
+router.use('/auth',require('./user'));
+
 
 
 

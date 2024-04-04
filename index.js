@@ -1,5 +1,9 @@
 const express = require("express");
+
+
+
 const db = require("./models");
+
 
 const {Tag}= require('./models');
 const {Blog} = require('./models');
@@ -7,6 +11,8 @@ const {BlogTag} = require('./models');
 const {User} = require('./models');
 
 
+// foreignKey: "tutorialId",
+//   as: "tutorial",
 
 User.hasMany(Blog);
 Blog.belongsTo(User);
@@ -18,6 +24,9 @@ Tag.belongsToMany(Blog,{through:BlogTag});
 
 const app = express();
 const PORT = 5000;
+
+
+app.use(express.json());
 
 
 
