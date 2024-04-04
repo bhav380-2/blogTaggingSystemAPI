@@ -7,8 +7,8 @@ const blogValidateRequest = async (req,res,next)=>{
 
     const rules = [
 
-        body('title').notEmpty().withMessage("Title is required"),
-        body('content').notEmpty().withMessage('Content is required')
+        body('title').notEmpty().withMessage("Title is required").trim().escape(),
+        body('content').notEmpty().withMessage('Content is required').trim().escape()
     ]
 
     //2. run those rule.

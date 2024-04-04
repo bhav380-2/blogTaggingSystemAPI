@@ -6,8 +6,8 @@ const tagValidateRequest = async (req,res,next)=>{
 
     const rules = [
 
-        body('tagName').notEmpty().withMessage("tagName is required"),
-        body('tagName').isAlphanumeric().withMessage('tagName can only have alpha-numeric characters')
+        body('tagName').notEmpty().withMessage("tagName is required")
+        .isAlphanumeric().withMessage('tagName can only have alpha-numeric characters').trim().escape()
     ]
 
     //2. run those rule.
