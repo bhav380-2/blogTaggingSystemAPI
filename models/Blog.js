@@ -1,30 +1,38 @@
 const { sequelize } = require(".");
 
 
-module.exports = (sequelize,DataTypes)=>{
+module.exports = (sequelize, DataTypes) => {
 
-    const Blog = sequelize.define("Blog",{
-        id:{
-            type:DataTypes.BIGINT,
-            primaryKey:true,
-            allowNull:false,
-            autoIncrement:true
+    const Blog = sequelize.define("Blog", {
+        id: {
+            type: DataTypes.BIGINT,
+            primaryKey: true,
+            allowNull: false,
+            autoIncrement: true
         },
-        
-        title:{
-            type:DataTypes.STRING,
+
+        title: {
+            type: DataTypes.STRING,
             allowNull: false,
 
         },
 
-        content:{
+        content: {
             type: DataTypes.TEXT,
             allowNull: false,
-            validate:{
-                notEmpty:true
+            validate: {
+                notEmpty: true
             }
         },
 
+    },
+
+    {
+        indexes: [
+            {
+                fields: ['createdAt']
+            },
+        ]
     });
 
     return Blog;

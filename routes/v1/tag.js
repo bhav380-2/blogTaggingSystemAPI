@@ -10,5 +10,7 @@ const tagController = new TagController();
 router.post('/add/:blogId',jwtAuth,tagValidateRequest,tagController.add);
 router.put('/edit/:blogId/:tagId',jwtAuth,tagValidateRequest,tagController.edit);
 
+router.delete('/delete/:blogId/:tagId',jwtAuth,tagController.delete);
+
 console.log("tag Router");
 module.exports = router;

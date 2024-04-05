@@ -9,16 +9,13 @@ module.exports = class TagController {
             const userId = req.userId;
             const tagName = req.body.tagName;
 
+
             const blog = await Blog.findOne({ where: { id: blogId, UserId: userId } })
 
-            // if blog does not belong to user
             if (!blog) {
                 return res.status(400).send({
                     "success": false,
-                    "error": {
-                        "message": "Unauthorized request"
-                    }
-
+                    "message": "Unauthorized request"
                 })
             }
 
@@ -43,7 +40,8 @@ module.exports = class TagController {
 
             if (!alreadyAttached) {
 
-                tag.setBlogs([blogId]);
+                tag.addBlogs([blogId]);
+                tag.save();
             }
 
             return res.status(201).send({
@@ -140,13 +138,14 @@ module.exports = class TagController {
         try {
 
             const blogId = req.params.blogId;
+        
             const tagId = req.params.tagId;
             const userId = req.userId;
+
 
             const user = await User.findOne({ where: { id: userId } });
             const blog = await Blog.findOne({ where: { id: blogId, UserId: userId } })
 
-            // if blog does not belong to user
             if (!blog && user.role != 'admin') {
                 return res.status(400).send({
                     "success": false,
@@ -172,7 +171,7 @@ module.exports = class TagController {
             const otherBlogsWithTag = await BlogTag.findOne({where:{TagId:tagId}});
 
             if(!otherBlogsWithTag){
-                await Tag.destroy({where:{TagId:tagId}});
+                await Tag.destroy({where:{id:tagId}});
             }
 
             return res.status(201).send({

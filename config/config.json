@@ -7,9 +7,9 @@
     "dialect": "mysql"
   },
   "test": {
-    "username": "root",
-    "password": null,
-    "database": "database_test",
+    "username": "bhav380-2",
+    "password": "Password@4x",
+    "database": "BlogTaggingSystem_database_test",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },

@@ -33,7 +33,17 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: 'user'
         }
 
-    });
+    },
+
+    {
+        indexes: [
+            {
+                fields: ['name']
+            },
+        ]
+    }
+    
+    );
 
     return User;
 }

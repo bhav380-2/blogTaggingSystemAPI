@@ -21,6 +21,9 @@ Blog.belongsTo(User);
 Blog.belongsToMany(Tag,{through:BlogTag});
 Tag.belongsToMany(Blog,{through:BlogTag});
 
+console.log("********************************************");
+console.log("____________________________________________________")
+
 
 const app = express();
 const PORT = 5000;
@@ -50,6 +53,8 @@ db.sequelize.sync().then((req) => {
     })
 
 })
+
+module.exports = app;
 
 
 

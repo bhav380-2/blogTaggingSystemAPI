@@ -19,6 +19,10 @@ router.get('/get/:id',blogController.get);
 
 router.delete('/delete/:id',jwtAuth,blogController.delete);
 
+router.get('/search',blogController.searchByTags);
+
+router.get('/filter',blogController.filter);
+
 
 
 console.log("Blog Router");
