@@ -1,26 +1,21 @@
 const  jwt = require('jsonwebtoken');
-// import env from '../config/environment.js';
 
 const jwtAuth = (req,res,next)=>{
-    //read token
-    const token = req.headers['authorization'].replace("Bearer ","");
-    console.log("*******************",token);
 
-    //if no token return error
+    // read token
+    const token = req.headers['authorization'].replace("Bearer ","");
+
+    // if token not found
     if(!token){
         return res.status(401).send({
             "status": false,
-            "errors": [
-              {
-                "message": "You need to sign in to proceed.",
-                "code": "NOT_SIGNEDIN"
-              }
-            ]
+            "error":{
+              "message":"You need to sign in to proceed."
+            }
         })
     }
 
-    //check if token is valid
-
+    // checks if token is valid
     try{
         const payload = jwt.verify(
             token,
@@ -29,22 +24,18 @@ const jwtAuth = (req,res,next)=>{
         req.userId = payload.userID;
         req.userEmail = payload.email;
 
-        console.log("hi");
-        
     }catch(err){
         return res.status(401).send({
             "status": false,
-            "errors": [
-              {
-                "message": "You need to sign in to proceed.",
-                "code": "NOT_SIGNEDIN"
-              }
-            ]
+            "error":{
+              "message":"You need to sign in to proceed."
+            }
+            
         })
     }
 
-  
-
+    // call next middelware
     next();
 }
+
 module.exports = jwtAuth;

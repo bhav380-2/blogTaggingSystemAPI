@@ -2,21 +2,10 @@ const express = require("express");
 const router = express.Router();
 
 
-const UserController = require('../../controllers/User');
+router.use('/blog',require('./blog'));  //redirects blog related req to blog.js file
+router.use('/tag',require('./tag'));   //redirects tag related req to tag.js file
+router.use('/auth',require('./user'));   //redirects auth related req to auth.js file
 
-const userController = new UserController();
-
-
-router.use('/blog',require('./blog'));
-router.use('/tag',require('./tag'));
-
-router.use('/auth',require('./user'));
-
-
-
-
-
-console.log("index Router");
 module.exports = router;
 
 

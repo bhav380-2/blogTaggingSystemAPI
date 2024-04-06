@@ -5,11 +5,6 @@ const should = chai.should();
 const { sequelize, Blog, Tag, BlogTag, User } = require('../models');
 chai.use(chaiHttp);
 
-// describe('db', () => {
-// Hook to run before all tests
-
-// })
-
 
 describe('Search Blog by Tags', () => {
 
@@ -137,48 +132,3 @@ describe('Search Blog by Tags', () => {
 
 
 
-
-
-
-
-// it('should return blogs with valid tags', async () => {
-//     // Perform actions to test the behavior of your controller function
-//     // For example, make a request to the controller function and assert the response
-//     // Ensure that the response matches the expected result based on the test data seeded in the database
-//     // Clean up any data created during the test to maintain a clean state for subsequent test runs
-//     const req = { query: { tags: 'tag1' } };
-//     const res = {
-//         status: sinon.stub().returnsThis(),
-//         send: sinon.stub(),
-//     };
-
-//     await searchBlogByTags(req, res);
-
-//     // // Assertions
-//     // expect(res.status.calledWith(200)).to.be.true;
-//     // expect(res.send.calledWith({
-//     //     success: true,
-//     //     content: {
-//     //         data: [{ id: 1, title: 'Test Blog 1', createdAt: "",updatedAt:"",content: 'Lorem ipsum...', UserId: 1,Tags:[] },
-//     //                 { id:2 ,title: 'Test Blog 2', content: 'Dolor sit amet...', UserId: 2,Tags:[] }
-//     //             ]
-//     //     }
-//     // })).to.be.true;
-
-//     const responseData = res.send.args[0][0];
-
-//     console.log(responseData.content.data[0].dataValues)
-
-
-//     // Assertions
-//     expect(res.status.calledWith(200)).to.be.true;
-//     expect(responseData.success).to.be.true;
-//     expect(responseData.content.data).to.be.an('array');
-//     expect(responseData.content.data).to.have.lengthOf(2); // Assuming only one blog is returned
-//     expect(responseData.content.data[0].dataValues).to.deep.equal({ 
-//       id: 1, 
-//       title: 'Test Blog 1', 
-//       content: 'Lorem ipsum...', 
-//       UserId: 1
-//     });
-// });

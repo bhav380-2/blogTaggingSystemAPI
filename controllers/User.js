@@ -122,7 +122,7 @@ module.exports = class UserController {
                 expiresIn: '1h',
             });
 
-            return res.status(200).send({
+            return res.status(201).send({
                 "status": true,
                 "content": {
                     "data": {

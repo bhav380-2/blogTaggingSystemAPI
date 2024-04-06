@@ -1,23 +1,17 @@
 const {body,validationResult} = require('express-validator')
 
-
 const blogValidateRequest = async (req,res,next)=>{
 
-    //1. setup rules for validation
-
+    // setup rules for validation
     const rules = [
-
         body('title').notEmpty().withMessage("Title is required").trim().escape(),
         body('content').notEmpty().withMessage('Content is required').trim().escape()
     ]
 
-    //2. run those rule.
-
+    // run the rule.
     await Promise.all(rules.map(rule=>rule.run(req)));
 
-
-    //3. check if there are any errors after running the rules
-
+    // check if there are any errors after running the rules
     let validationErrors = validationResult(req);
 
     if(!validationErrors.isEmpty()){
@@ -30,8 +24,8 @@ const blogValidateRequest = async (req,res,next)=>{
         })
     }
 
+    // if no validationErrors , call next middleware
     next();
-
 }
 
 module.exports = blogValidateRequest;

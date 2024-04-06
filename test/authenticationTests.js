@@ -175,7 +175,7 @@ describe('Authentication and authorization checks', () => {
     })
 
 
-    after( async () => {
+    after(async () => {
 
         await sequelize.sync({ force: true });
     })

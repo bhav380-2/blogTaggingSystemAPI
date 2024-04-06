@@ -2,30 +2,29 @@ const express = require("express");
 const router = express.Router();
 
 const blogValidation = require('../../middlewares/blogValidation');
-
 const jwtAuth =require('../../middlewares/jwt');
 
 const BlogController = require('../../controllers/blog');
-
 const blogController = new BlogController();
 
 
 
-router.post('/add',jwtAuth,blogValidation,blogController.add)
+// ______________________get requests___________________
 
-router.get('/getAll',blogController.getAll);
-
-router.get('/get/:id',blogController.get);
-
-router.delete('/delete/:id',jwtAuth,blogController.delete);
-
+// _______search and filter endpoint______
 router.get('/search',blogController.searchByTags);
-
 router.get('/filter',blogController.filter);
 
 
+router.get('/getAll',blogController.getAll);
+router.get('/get/:id',blogController.get);
 
-console.log("Blog Router");
+// _____________________post request___________________
+router.post('/add',jwtAuth,blogValidation,blogController.add)
+
+// _____________________delete request_________________
+router.delete('/delete/:id',jwtAuth,blogController.delete);
+
 module.exports = router;
 
 
