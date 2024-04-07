@@ -88,7 +88,7 @@ module.exports = class TagController {
 
            // handles unauthorized request
             if (!blog && user.role != 'admin') {
-                return res.status(400).send({
+                return res.status(401).send({
                     "success": false,
                     "error": {
                         "message": "Unauthorized request"
@@ -179,7 +179,7 @@ module.exports = class TagController {
             // if user is not admin or blog does not belong to logged in user
             // return response with status code 400
             if (!blog && user.role != 'admin') {
-                return res.status(400).send({
+                return res.status(401).send({
                     "success": false,
                     "error": {
                         "message": "Unauthorized request"
@@ -216,7 +216,7 @@ module.exports = class TagController {
             }
 
             // return response with status code 201 and "success":true
-            return res.status(204).send({
+            return res.status(200).send({
                 "success":true,
             })
 

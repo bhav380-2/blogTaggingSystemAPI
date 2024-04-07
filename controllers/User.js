@@ -10,17 +10,12 @@ module.exports = class UserController {
             const {email,password} = req.body;
             const user = await User.findOne({where:{email:email}})
 
-            console.log(user);
             if(!user){
-                return res.status(400).send({
+                return res.status(401).send({
                     "status": false,
-                    "errors": [
-                      {
-                        "param": "email",
-                        "message": "Please provide a valid email address.",
-                        "code": "INVALID_INPUT"
-                      }
-                    ]
+                    "error": {
+                        "message":"Invalid email/password"
+                    }
                   });
             }else{
 
@@ -47,15 +42,11 @@ module.exports = class UserController {
                     })
                 }else{
                     
-                    return res.status(400).send({
+                    return res.status(401).send({
                         "status": false,
-                        "errors": [
-                          {
-                            "param": "password",
-                            "message": "The credentials you provided are invalid.",
-                            "code": "INVALID_CREDENTIALS"
-                          }
-                        ]
+                        "error": {
+                            "message":"Invalid email/password"
+                        }
                       });
                 }
             }
@@ -64,7 +55,6 @@ module.exports = class UserController {
             console.log("error in signin ::::",err);
             return res.status(500).send("Something went wrong")
         }
-
 
     }
 
@@ -107,7 +97,6 @@ module.exports = class UserController {
                     "status": false,
                     "message":"User with this email address already exists"
                 })
-
             }
 
             const hashedPassword = await bcrypt.hash(password, 12);

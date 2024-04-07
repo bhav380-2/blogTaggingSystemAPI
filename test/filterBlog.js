@@ -101,31 +101,14 @@ describe('filter Blogs by tags, date, author', () => {
             })
     })
 
+  
     it('should filter Blogs by date , if only date is passed in req', (done) => {
 
-        // let tags = {};
-        chai.request(app)
-            .get('/api/v1/blog/filter?startDate=2024-04-05&endDate=2024-04-05')
-            .end((err, res) => {
-                const data = res.body.content.data;
-                res.should.have.status(200);
-                res.body.should.be.a('object');
-                data.should.be.a('array');
-                data.should.have.lengthOf(5);
-                data.should.have.property('0').to.deep.include({
-                    id: 1,
-                    title: 'Test Blog 1',
-                    content: 'Lorem ipsum...',
-                    UserId: 1,
-                });
-                done()
-            })
-    })
-
-    it('should filter Blogs by date , if only date is passed in req', (done) => {
+        let startDate = new Date().toISOString().split('T')[0];
+        let endDate = startDate;
 
         chai.request(app)
-            .get('/api/v1/blog/filter?startDate=2024-04-05&endDate=2024-04-05')
+            .get(`/api/v1/blog/filter?startDate=${startDate}&endDate=${endDate}`)
             .end((err, res) => {
                 const data = res.body.content.data;
                 res.should.have.status(200);
@@ -163,8 +146,11 @@ describe('filter Blogs by tags, date, author', () => {
     })
 
     it('should filter blogs by date and author , if only date and author are passed in req', (done) => {
+        let startDate = new Date().toISOString().split('T')[0];
+        let endDate = startDate;
+
         chai.request(app)
-            .get('/api/v1/blog/filter?startDate=2024-04-05&endDate=2024-04-05&author=user 2')
+            .get(`/api/v1/blog/filter?startDate=${startDate}&endDate=${endDate}&author=user 2`)
             .end((err, res) => {
                 const data = res.body.content.data;
                 res.should.have.status(200);

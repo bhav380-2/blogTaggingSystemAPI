@@ -63,7 +63,7 @@ describe('Authentication and authorization checks', () => {
             });
     })
 
-    it('should not allow user to add blog if , user is not logged in', (done) => {
+    it('should not allow user to add blog, if user is not logged in', (done) => {
 
         let wrongToken = "zjeiwaijd283828ng.fjdjfiei"
         chai.request(app)
@@ -72,7 +72,7 @@ describe('Authentication and authorization checks', () => {
             .end((err, res) => {
                 res.should.have.status(401);
                 res.body.should.be.a('object');
-                res.body.errors[0].should.have.property('message').equals('You need to sign in to proceed.')
+                res.body.error.should.have.property('message').equals('You need to sign in to proceed.')
                 done()
             })
     })
@@ -83,8 +83,8 @@ describe('Authentication and authorization checks', () => {
             .delete('/api/v1/blog/delete/2')
             .auth(token, { type: 'bearer' })
             .end((err, res) => {
-                res.should.have.status(400);
-                res.body.should.have.property('message').equals('Unauthorized Request');
+                res.should.have.status(401);
+                res.body.should.have.property('message').equals('Unauthorized request');
                 done();
             })
     })
@@ -95,7 +95,7 @@ describe('Authentication and authorization checks', () => {
             .delete('/api/v1/blog/delete/1')
             .auth(token, { type: 'bearer' })
             .end((err, res) => {
-                res.should.have.status(201);
+                res.should.have.status(200);
                 done();
             })
     })
@@ -107,7 +107,7 @@ describe('Authentication and authorization checks', () => {
             .auth(token, { type: 'bearer' })
             .send({ tagName: "newTag" })
             .end((err, res) => {
-                res.should.have.status(400);
+                res.should.have.status(401);
                 res.body.should.have.property('message').equals('Unauthorized request');
                 done();
             })
@@ -133,7 +133,7 @@ describe('Authentication and authorization checks', () => {
             .auth(token, { type: 'bearer' })
             .send({ tagName: "newTag" })
             .end((err, res) => {
-                res.should.have.status(400);
+                res.should.have.status(401);
                 done();
             })
     })
@@ -145,7 +145,7 @@ describe('Authentication and authorization checks', () => {
             .auth(token, { type: 'bearer' })
             .send({ tagName: "newTag" })
             .end((err, res) => {
-                res.should.have.status(201);
+                res.should.have.status(200);
                 done();
             })
     })
@@ -157,7 +157,7 @@ describe('Authentication and authorization checks', () => {
             .auth(token, { type: 'bearer' })
             .send({ tagName: "newTag" })
             .end((err, res) => {
-                res.should.have.status(400);
+                res.should.have.status(401);
                 done();
             })
     })
@@ -169,7 +169,7 @@ describe('Authentication and authorization checks', () => {
             .auth(token, { type: 'bearer' })
             .send({ tagName: "newTag" })
             .end((err, res) => {
-                res.should.have.status(201);
+                res.should.have.status(200);
                 done();
             })
     })

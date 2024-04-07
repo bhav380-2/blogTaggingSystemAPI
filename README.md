@@ -83,6 +83,14 @@ To use this application, follow the steps below:
 
        ```
 
+   - Response (Status 400 Bad Request):
+       ```json
+        {
+            "status": false,
+            "message": "User with this email address already exists"
+        }
+       ```
+
 2. **SignIn:**
      - Authenticate a user by sending a POST request to the `/auth/signin` endpoint.
      - Endpoint: `POST /auth/signin`
@@ -93,6 +101,7 @@ To use this application, follow the steps below:
          "password": "password123"  
        }
        ```
+
      - Response (Status 200 OK):
        ```json
        {
@@ -107,6 +116,16 @@ To use this application, follow the steps below:
               "meta": {
                   "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOjksImVtYWlsIjoidXNlckBleGFtcGxlLmNvbSIsImlhdCI6MTcxMjM3NTU4OCwiZXhwIjoxNzEyMzc5MTg4fQ.0N_Q8E54eRFSuAiejM0k445kGMWLFJAKJm6RkWYEbQM"
               }
+          }
+       }
+       ```
+
+    - Response (Status 401 Unauthorized):
+       ```json
+       {
+          "status": false,
+          "error": {
+              "message": "Invalid email/password"
           }
        }
        ```
@@ -150,15 +169,34 @@ To use this application, follow the steps below:
         }
        ```
 
+    - Invalid Input - Response (Status 400 Bad Request):
+      ```json
+        { 
+          "success":false,
+              "error":{
+                  "message":"Title is required"
+              }
+        }
+       ```
+
+    - Invalid Input - Response (Status 400 Bad Request):
+      ```json
+        { 
+          "success":false,
+              "error":{
+                  "message":"Title is required"
+              }
+        }
+        ```
+
 2. **Get all Bogs**
-   - Retrieve all blog posts 
+     - Retrieve all blog posts 
      - Endpoint: `GET /blog/getAll`
 
      - Authentication: Optional (Bearer token)
 
      - Response (Status 200 OK):
        ```json
-
           {
             "success":true,
             "content":{
@@ -245,66 +283,80 @@ To use this application, follow the steps below:
         }
        ```
 
-
-
+     - Blog Not found - Response (Status 404 Not Found):
+        ```json
+          { 
+              "success": false,
+              "message": "Blog not Found"
+          }
 4. **Search Blogs by Tags**
-   - Search blog posts by Tags 
+      - Search blog posts by Tags 
      - Endpoint: `GET /blog/search?tags=tag1,tag3`
      - Query Parameters:
        - `tags`: tags separated by comma
      
      - Authentication: Optional (Bearer token)
      - Response (Status 200 OK):
-       ```json
-       {
-          "success": true,
-          "content": {
-              "data": [
-                  {
-                      "id": 2,
-                      "title": "blog 2",
-                      "content": "content of blog2",
-                      "createdAt": "2024-04-04T17:37:24.000Z",
-                      "updatedAt": "2024-04-04T17:37:24.000Z",
-                      "UserId": 1,
-                      "Tags": [
-                          {
-                              "id": 1,
-                              "tagName": "tag1",
-                              "createdAt": "2024-04-04T17:27:27.000Z",
-                              "updatedAt": "2024-04-04T17:27:27.000Z",
-                              "BlogTag": {
-                                  "id": 14,
-                                  "createdAt": "2024-04-05T03:51:22.000Z",
-                                  "updatedAt": "2024-04-05T03:51:22.000Z",
-                                  "BlogId": 2,
-                                  "TagId": 1
+        ```json
+          {
+              "success": true,
+              "content": {
+                  "data": [
+                      {
+                          "id": 2,
+                          "title": "blog 2",
+                          "content": "content of blog2",
+                          "createdAt": "2024-04-04T17:37:24.000Z",
+                          "updatedAt": "2024-04-04T17:37:24.000Z",
+                          "UserId": 1,
+                          "Tags": [
+                              {
+                                  "id": 1,
+                                  "tagName": "tag1",
+                                  "createdAt": "2024-04-04T17:27:27.000Z",
+                                  "updatedAt": "2024-04-04T17:27:27.000Z",
+                                  "BlogTag": {
+                                      "id": 14,
+                                      "createdAt": "2024-04-05T03:51:22.000Z",
+                                      "updatedAt": "2024-04-05T03:51:22.000Z",
+                                      "BlogId": 2,
+                                      "TagId": 1
+                                  }
+                              },
+                              {
+                                  "id": 3,
+                                  "tagName": "tag3",
+                                  "createdAt": "2024-04-05T03:41:44.000Z",
+                                  "updatedAt": "2024-04-05T03:41:44.000Z",
+                                  "BlogTag": {
+                                      "id": 17,
+                                      "createdAt": "2024-04-05T03:56:48.000Z",
+                                      "updatedAt": "2024-04-05T03:56:48.000Z",
+                                      "BlogId": 2,
+                                      "TagId": 3
+                                  }
                               }
-                          },
-                          {
-                              "id": 3,
-                              "tagName": "tag3",
-                              "createdAt": "2024-04-05T03:41:44.000Z",
-                              "updatedAt": "2024-04-05T03:41:44.000Z",
-                              "BlogTag": {
-                                  "id": 17,
-                                  "createdAt": "2024-04-05T03:56:48.000Z",
-                                  "updatedAt": "2024-04-05T03:56:48.000Z",
-                                  "BlogId": 2,
-                                  "TagId": 3
-                              }
-                          }
-                      ]
-                  }
-              ]
+                          ]
+                      }
+                  ]
+              }
           }
-      }
-       ```
+        ```
+
+
+
+    - Blogs Not found - Response (Status 404 Not Found):
+      ```json
+        { 
+            "success": false,
+            "message": "Blog not Found"
+        }
+        ```
 
 
 
 5. **Filter Blogs**
-   - Flter blog posts by Tags, date, Author's name
+     - Flter blog posts by Tags, date, Author's name
      - Endpoint: `GET /blog/filter?tags=tag1&startDate=2024-04-04&endDate=2024-04-06&author=new user`
      - Parameters:
        - `tags`: tags separated by comma
@@ -358,8 +410,25 @@ To use this application, follow the steps below:
           }
         }
        ```
+
+
+   - Sent empty input in requesst - Response (Status 400 Bad Request):
+     ```json
+       { 
+          "success": false,
+          "message": "must send alteast date , author or tags"
+       }
+      ```
+
+   - Blogs Not found - Response (Status 404 Not Found):
+     ```json
+       { 
+          "success": false,
+          "message": "Blogs not Found"
+       }
+      ```
 6. **Delete Blog**
-   - Search blog posts by Tags 
+     - Search blog posts by Tags 
      - Endpoint: `DELETE /blog/delete:id`
    
      - Authentication: Required (Bearer token)
@@ -369,6 +438,14 @@ To use this application, follow the steps below:
           "success": true
        }
        ```
+
+      - Blog does not belong to user - Response (Status 401 Unauthorized):
+        ```json
+        { 
+            "success": false,
+            "message": "Unauthorized request"
+        }
+        ```
 
 
 ### Tag Endpoints
@@ -401,6 +478,25 @@ To use this application, follow the steps below:
         }
        ```
 
+      - Blog does not belong to user - Response (Status 401 Unauthorized):
+        ```json
+        { 
+            "success": false,
+            "message": "Unauthorized request"
+        }
+          ```
+
+
+     - Tag is already added -  (Status 400 Bad Request):
+        ```json
+        { 
+            "success": false,
+              "error": {
+                "message": "Tag tagName is already added to this blog"
+              }
+        }
+          ```
+
 
 2. **Edit Tag**
      - Edit tag of a particular Blog
@@ -418,6 +514,20 @@ To use this application, follow the steps below:
          "success" : true
        }
        ```
+      - Blog on which user is trying to edit tag , does not belong to user - Response (Status 401 Unauthorized):
+        ```json
+        { 
+            "success": false,
+            "message": "Unauthorized request"
+        }
+          ```
+     - Tag not found - Response (Status 404 Not Found ):
+        ```json
+        { 
+            "success": false,
+            "message": "TagId Not found"
+        }
+          ```
 
 3. **Delete Tag:**
      - Delete tag of a particular blog
@@ -435,5 +545,20 @@ To use this application, follow the steps below:
          "success": true
        }
        ```
+
+     - Blog on which user is trying to edit tag , does not belong to user - Response (Status 401 Unauthorized):
+        ```json
+        { 
+            "success": false,
+            "message": "Unauthorized request"
+        }
+          ```
+     - Tag not found - Response (Status 404 Not Found ):
+        ```json
+        { 
+            "success": false,
+            "message": "TagId Not found"
+        }
+          ```
 
 

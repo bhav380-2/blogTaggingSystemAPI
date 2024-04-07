@@ -112,7 +112,7 @@ module.exports = class BlogController {
 
             const filterOptions = {}; // used to store all filter options
 
-            let user
+            let user;
             // if author is passed in req
             if (author) {
 
@@ -122,6 +122,14 @@ module.exports = class BlogController {
                 // if author present in Users table stores id of author in filteredOptions
                 if (user) {
                     filterOptions.UserId = user.id;
+                }else{
+
+                    return res.status(404).send({
+                        "success": false,
+                        "message": "Blogs not found"
+                    })
+
+
                 }
             }
 
@@ -176,15 +184,15 @@ module.exports = class BlogController {
                 // if ids array is not empty, store ids array in filterOptions
                 if (ids.length != 0) {
                     filterOptions.id = ids;
+                }else{
+                    return res.status(404).send({
+                        "success": false,
+                        "message": "Blogs not found"
+                    })
                 }
             }
 
-            if(!filterOptions.UserId || !filterOptions.id){
-                return res.status(404).send({
-                    "success": false,
-                    "message": "Blogs not found"
-                })
-            }
+        
 
             // find blogs using filterOptions
             const blogs = await Blog.findAll({ where: filterOptions, include: { model: Tag } });
