@@ -25,10 +25,12 @@
 - Implemented input validation and sanitization for user-provided data, enhancing security and preventing malicious activities.
 - Optimized search queries for performance using Sequelize query optimization techniques, ensuring efficient retrieval of relevant data.
 
-### Testing 
 
-- Contains unit tests covering all aspects of the tagging system, search/filter functionality, and authentication enhancements.
 
+
+## Technologies Used
+
+Node.js, Express.js, Sequelize, MySQL, JSON Web Tokens (JWT), and for unit testing - Mocha, Chai etc.
 
 ## Installation
 
@@ -41,6 +43,32 @@
 3. Install dependences:
    ```bash
    npm install
+
+
+## Database Configuration
+
+Ensure you have MySQL installed and running on your local machine. Modify the `config.json` file in the `config` directory with your database credentials based on the environments development, test, production:
+
+  ```json
+  {
+    "username": "databaseUser",
+    "password": "password",
+    "database": "databaseName",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  }
+  ```
+
+
+
+## Testing
+
+The project includes unit tests written using Mocha and Chai. To run the tests, ensure that you have completed the installation steps and configured the database for the test environment. Then, use the following command:
+
+  ```bash
+  npm test
+  ```
+
 
 ## Usage
 
@@ -178,16 +206,6 @@ To use this application, follow the steps below:
               }
         }
        ```
-
-    - Invalid Input - Response (Status 400 Bad Request):
-      ```json
-        { 
-          "success":false,
-              "error":{
-                  "message":"Title is required"
-              }
-        }
-        ```
 
 2. **Get all Bogs**
      - Retrieve all blog posts 
@@ -412,7 +430,7 @@ To use this application, follow the steps below:
        ```
 
 
-   - Sent empty input in requesst - Response (Status 400 Bad Request):
+   - Sent empty input in request - Response (Status 400 Bad Request):
      ```json
        { 
           "success": false,
