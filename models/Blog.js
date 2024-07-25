@@ -1,39 +1,29 @@
-const { sequelize } = require(".");
+const mongoose = require('mongoose');
 
+const blogSchema = new mongoose.Schema({
 
-module.exports = (sequelize, DataTypes) => {
-
-    const Blog = sequelize.define("Blog", {
-        id: {
-            type: DataTypes.BIGINT,
-            primaryKey: true,
-            allowNull: false,
-            autoIncrement: true
-        },
-
-        title: {
-            type: DataTypes.STRING,
-            allowNull: false,
-
-        },
-
-        content: {
-            type: DataTypes.TEXT,
-            allowNull: false,
-            validate: {
-                notEmpty: true
-            }
-        },
-
+    title : {
+        type : String,
+        required:true
     },
 
-    {
-        indexes: [
-            {
-                fields: ['createdAt']
-            },
-        ]
-    });
+    content:{
+        type : String,
+        required:true
+    },
 
-    return Blog;
-}
+    author : {
+        type: mongoose.Schema.Types.ObjectId,
+        ref:"Users"
+    },
+
+    tags:[{
+        type: mongoose.Types.ObjectId,
+        ref : "Tags"
+    }]
+},{
+    timestamps:true
+})
+
+const Blogs = mongoose.model('Blogs',blogSchema);
+module.exports = Blogs;

@@ -1,6 +1,10 @@
 // _______imports________
-const { Blog, User, Tag, sequelize } = require('../models');
-const { Op } = require('sequelize');
+// const { Blog, User, Tag, sequelize } = require('../models');
+// const { Op } = require('sequelize');
+
+const Blogs = require('../models/Blog');
+const Users = require('../models/User');
+const Tags = require('../models/Tag');
 
 
 // ________ Blog controller__________
@@ -26,61 +30,7 @@ module.exports = class BlogController {
             // split tags using ',' and stored returned array in tagList
             let tagList = tags.split(',');
 
-            let list = ""; // list variable is used in writing sql query , it stores tags in format: " 'tag1','tag2', ...etc"
-
-            // iterating on each tag and storing tags inside list in format : " 'tag1','tag2', ...etc"
-            tagList.map(t => {
-                list = list + `'${t}',`
-            })
-
-            // removing last ',' from list
-            list = list.slice(0, list.length - 1);
-
-            // sql query
-            const query = `
-                select b.id from Blogs as b 
-                Inner join ( BlogTags as bt Inner join Tags as t on t.id = bt.TagId) 
-                on b.id = bt.BlogId and t.tagName in (${list})
-                Group By b.id
-                having Count(b.id)= ${tagList.length};
-          `;
-
-            //   using query to generate blog ids of blogs which contains all the tags sent in request 
-            const bids = await sequelize.query(query, {
-                // replacements: { tagList },
-                type: sequelize.QueryTypes.SELECT
-            }
-            );
-
-            // bids is in form of object , extracting all ids from bids and storing them inside ids array
-            let ids = bids.map(bid => {
-                return bid.id;
-            })
-
-            // if ids is empty , no blog was found have all the tags passed in request
-            // returning with status code 404
-            if (ids.length == 0) {
-                return res.status(404).send({
-                    "success": false,
-                    "message": "Blogs not found"
-                })
-            }
-
-            // finds blogs whose id matches with id in ids array
-            const blogs = await Blog.findAll({
-                where: {
-                    id: {
-                        [Op.in]: ids
-                    }
-                },
-                include: [
-                    {
-                        model: Tag,
-                    }
-                ]
-            })
-
-
+            const blogs = Blogs.find({ $or: [{ tags: { $in: tagList } }] })
             // return blogs with success status code 200
             return res.status(200).send({
                 "success": true,
@@ -94,13 +44,11 @@ module.exports = class BlogController {
         }
     }
 
-
     // ________________filter blogs using date,author,tags_______________________
     async filter(req, res) {
 
         try {
             let { startDate, endDate, author, tags } = req.query;
-
 
             // if data , author and tags, none of them are passed return with status code 400 and error message 
             if ((!startDate || !endDate) && (!author || author.trim() == '') && (!tags || tags.trim() == '')) {
@@ -113,23 +61,24 @@ module.exports = class BlogController {
             const filterOptions = {}; // used to store all filter options
 
             let user;
+            console.log(author);
             // if author is passed in req
             if (author) {
 
                 //finds author in Users table
-                 user = await User.findOne({ where: { name: author } });
+                user = await Users.findOne({ name: author });
 
                 // if author present in Users table stores id of author in filteredOptions
                 if (user) {
-                    filterOptions.UserId = user.id;
-                }else{
+                    filterOptions.author = user._id;
+                } else {
+
+                    console.log("HIIIII");
 
                     return res.status(404).send({
                         "success": false,
                         "message": "Blogs not found"
                     })
-
-
                 }
             }
 
@@ -142,7 +91,10 @@ module.exports = class BlogController {
                 endDate.setHours(23, 59, 59, 999);
 
                 // stores date filter in filterOptions
-                filterOptions.createdAt = { [Op.between]: [startDate, endDate] };
+                filterOptions.createdAt = {
+                    $gte: startDate,
+                    $lt: endDate,
+                }
             }
 
             // if tags were passed in req
@@ -150,61 +102,21 @@ module.exports = class BlogController {
 
                 // split tags using ',' and stored returned array in tagList
                 const tagList = tags.split(',');
-
-                let list = '';   // list variable is used in writing sql query , it stores tags in format: " 'tag1','tag2', ...etc"
-
-                // iterating on each tag and storing tags inside list in format : " 'tag1','tag2', ...etc"
-                tagList.map(t => {
-                    list = list + `'${t}',`
-                })
-
-                // removing last ',' from list
-                list = list.slice(0, list.length - 1);
-
-                // sql query
-                const query = `
-                    select b.id from Blogs as b 
-                    Inner join ( BlogTags as bt Inner join Tags as t on t.id = bt.TagId) 
-                    on b.id = bt.BlogId and t.tagName in (${list})
-                    Group By b.id
-                    having Count(b.id)= ${tagList.length};
-              `;
-
-                //   using query to generate blog ids of blogs which contains all the tags sent in request 
-                const bids = await sequelize.query(query, {
-                    replacements: { tagList },
-                    type: sequelize.QueryTypes.SELECT
-                });
-
-                // bids is in form of object , extracting all ids from bids and storing them inside ids array
-                let ids = bids.map(bid => {
-                    return bid.id;
-                })
-
-                // if ids array is not empty, store ids array in filterOptions
-                if (ids.length != 0) {
-                    filterOptions.id = ids;
-                }else{
-                    return res.status(404).send({
-                        "success": false,
-                        "message": "Blogs not found"
-                    })
-                }
+                filterOptions.$or = [{ tags: { $in: tagList } }]
             }
 
-        
+
 
             // find blogs using filterOptions
-            const blogs = await Blog.findAll({ where: filterOptions, include: { model: Tag } });
+            const blogs = await Blogs.find({}).where(filterOptions);
 
             // if blogs not found , return with 404 status code
-            if (blogs.length == 0 ) {
+            if (blogs.length == 0) {
                 return res.status(404).send({
                     "success": false,
                     "message": "Blogs not found"
                 })
             }
-
             //  if blogs found , after applying filterOptions
             // return res with 200 status code and blogs 
             return res.status(200).send({
@@ -225,29 +137,27 @@ module.exports = class BlogController {
 
         try {
             const { title, content } = req.body;
-
-            // creates new blog
-            const newBlog = await Blog.create({
+            const newBlog = await Blogs.create({
                 title: title,
                 content: content,
-                UserId: req.userId
+                author: req.userId
             })
 
-            // gets author data
-            const author = await newBlog.getUser({ attributes: { exclude: ['password'] } });
+            const author = await Users.findById(req.userId).select('name email blogs');
+            author.blogs.push(newBlog.id);
+            await author.save();
+            newBlog.author = author;
 
-            // returns newBlog data and author data inside response
+            // returns newBlog data 
             return res.status(201).send({
                 "success": true,
                 "content": {
-                    "data": {
-                        ...newBlog.dataValues,
-                        "author": author
-                    }
+                    "data": newBlog
                 }
             })
 
         } catch (err) {
+            console.log(err);
             return res.status(500).send("Something went wrong");
         }
     }
@@ -258,23 +168,7 @@ module.exports = class BlogController {
         try {
 
             // finds all blogs
-            const blogs = await Blog.findAll({
-                attributes: {
-                    exclude: ['UserId']
-                },
-                include: [
-                    {
-                        model: User,
-                        attributes: {
-                            exclude: ['password']
-                        }
-                    },
-
-                    {
-                        model: Tag
-                    }
-                ]
-            });
+            const blogs = await Blogs.find({}).populate({ path: "author", select: 'name email' }).populate({ path: 'tags' });
 
             // return blogs with status code 200
             return res.status(200).send({
@@ -299,27 +193,7 @@ module.exports = class BlogController {
             const blogId = req.params.id;
 
             // finds blog using blogId
-            const blog = await Blog.findOne({
-                where: {
-                    id: blogId
-                },
-                attributes: {
-                    exclude: ['UserId']
-                },
-                include: [
-
-                    {
-                        model: User,
-                        attributes: {
-                            exclude: ['password']
-                        }
-                    },
-
-                    {
-                        model: Tag
-                    }
-                ]
-            });
+            const blog = await Blogs.findById(blogId).populate({ path: 'author', select: 'name email' }).populate({ path: 'tags' });
 
             // if blog not found return response with status code 404
             if (!blog) {
@@ -348,17 +222,16 @@ module.exports = class BlogController {
     async delete(req, res) {
 
         try {
-
             const blogId = req.params.id;
 
             // finds blog by blogId
-            const blog = await Blog.findOne({ where: { id: blogId } });
+            const blog = await Blogs.findById(blogId);
 
             // finds user by userId
-            const user = await User.findOne({ where: { id: req.userId }, attributes: { exclude: ['password'] } });
+            const user = await Users.findById(req.userId).select('-password');
 
             // handles unauthorized request
-            if (user.role != 'admin' && blog.UserId != req.userId) {
+            if (user.role != 'admin' && blog.author != req.userId) {
 
                 return res.status(401).send({
                     "success": false,
@@ -366,10 +239,22 @@ module.exports = class BlogController {
                 });
             }
 
-            // if user is admin or blog belongs to logged in user
+            let blogAuthor;
 
-            // deletes the blog 
-            await Blog.destroy({ where: { id: blogId } });
+            if (user.role == 'admin' && blog.author != req.userId) {
+                blogAuthor = await Users.findById(blog.author);
+            } else {
+                blogAuthor = user;
+            }
+
+            blogAuthor.blogs = blogAuthor.blogs.filter((blog) => {
+                return blog._id != blogId
+            })
+
+
+            await blogAuthor.save();
+
+            await blog.deleteOne();
 
             // return response with status code 201
             return res.status(200).send({
@@ -377,50 +262,8 @@ module.exports = class BlogController {
             })
 
         } catch (err) {
+            console.log(err);
             return res.status(500).send("Something went wrong")
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//  SELECT `Blog`.`id`, COUNT(`Tag`.`id`) AS `tagCount`, `Tags->BlogTag`.`id` AS `Tags.BlogTag.id`, `Tags->BlogTag`.`createdAt` AS `Tags.BlogTag.createdAt`, `Tags->BlogTag`.`updatedAt` AS `Tags.BlogTag.updatedAt`, `Tags->BlogTag`.`BlogId` AS `Tags.BlogTag.BlogId`, `Tags->BlogTag`.`TagId` AS `Tags.BlogTag.TagId` FROM `Blogs` AS `Blog` INNER JOIN ( `BlogTags` AS `Tags->BlogTag` INNER JOIN `Tags` AS `Tags` ON `Tags`.`id` = `Tags->BlogTag`.`TagId`) ON `Blog`.`id` = `Tags->BlogTag`.`BlogId` AND `Tags`.`tagName` IN ('COC', 'h33', 'x') GROUP BY `id` HAVING `tagCount` = 3;
-
-
-
-
-
-
-// select b.id,Count(b.id) from Blogs as b 
-// Inner join ( BlogTags as bt Inner join Tags as t on t.id = bt.TagId) 
-//  on b.id = bt.BlogId and t.tagName in tagList
-//   Group By b.id
-// // having Count(b.id)= tagList.length
-
-
-
-
-// const blogs = await Blog.findAll({
-//     include:[{
-//         model:Tag,
-//         where:{tagName:{[Op.in]:tagList}},
-//         attributes:[]
-//     }]
-//     , attributes: ['id', [sequelize.fn('COUNT', sequelize.col('Tag.id')), 'tagCount']],
-//     group: ['Blog.id'], // Group by post id to ensure distinct posts
-//     having: sequelize.where( sequelize.col('tagCount'), '=', tagList.length)
-// })
