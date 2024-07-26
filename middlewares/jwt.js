@@ -3,7 +3,7 @@ const  jwt = require('jsonwebtoken');
 const jwtAuth = (req,res,next)=>{
 
     // read token
-    const token = req.headers['authorization'].replace("Bearer ","");
+    const token = req.headers.authorization.replace("Bearer ","");
 
     // if token not found
     if(!token){
@@ -33,6 +33,8 @@ const jwtAuth = (req,res,next)=>{
             
         })
     }
+
+    console.log("Hi");
 
     // call next middelware
     next();

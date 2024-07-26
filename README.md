@@ -30,7 +30,7 @@
 
 ## Technologies Used
 
-Node.js, Express.js, Sequelize, MySQL, JSON Web Tokens (JWT), and for unit testing - Mocha, Chai etc.
+Node.js, Express.js, Mongoose, JSON Web Tokens (JWT) etc.
 
 ## Installation
 
@@ -45,29 +45,7 @@ Node.js, Express.js, Sequelize, MySQL, JSON Web Tokens (JWT), and for unit testi
    npm install
 
 
-## Database Configuration
 
-Ensure you have MySQL installed and running on your local machine. Modify the `config.json` file in the `config` directory with your database credentials based on the environments development, test, production:
-
-  ```json
-  {
-    "username": "databaseUser",
-    "password": "password",
-    "database": "databaseName",
-    "host": "127.0.0.1",
-    "dialect": "mysql"
-  }
-  ```
-
-
-
-## Testing
-
-The project includes unit tests written using Mocha and Chai. To run the tests, ensure that you have completed the installation steps and configured the database for the test environment. Then, use the following command:
-
-  ```bash
-  npm test
-  ```
 
 
 ## Usage

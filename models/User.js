@@ -1,49 +1,35 @@
-const { sequelize } = require(".");
+const mongoose = require("mongoose");
 
-module.exports = (sequelize, DataTypes) => {
+const userSchema = new mongoose.Schema({
 
-    const User = sequelize.define("User", {
-
-        id: {
-            type: DataTypes.BIGINT,
-            primaryKey: true,
-            allowNull: false,
-            autoIncrement: true
-        },
-
-        name: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-
-        email: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            unique: true
-        },
-
-        password: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-
-        role: {
-            type: DataTypes.ENUM('user', 'admin'),
-            allowNull: false,
-            defaultValue: 'user'
-        }
-
+    name :{
+        type: String,
+        required:true
+    },
+    email : {
+        type : String,
+        required:true,
+        unique:true
+    },
+    password:{
+        type:String,
+        required:true
+    },
+    role : {
+        type: String,
+        enum : ["admin","user"],
+        default : "user"
     },
 
-    {
-        indexes: [
-            {
-                fields: ['name']
-            },
-        ]
-    }
-    
-    );
+    blogs:[{
+        type: mongoose.Types.ObjectId,
+        ref : "Blog"
+    }],
+},{
+    timestamps: true
+})
 
-    return User;
-}
+
+
+const Users = mongoose.model("Users",userSchema);
+module.exports = Users;
