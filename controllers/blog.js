@@ -14,11 +14,9 @@ module.exports = class BlogController {
     async searchByTags(req, res) {
 
         try {
-            const { tags } = req.query;
-
+            let { tags } = req.query;
             // if tags are not sent in request, return response with status code 400
             if (!tags || tags.trim() == "") {
-
                 return res.status(400).send({
                     "success": false,
                     "content": {
@@ -30,7 +28,28 @@ module.exports = class BlogController {
             // split tags using ',' and stored returned array in tagList
             let tagList = tags.split(',');
 
-            const blogs = Blogs.find({ $or: [{ tags: { $in: tagList } }] })
+            // __________________technique 1 -- using Blogs model and populate_____________________
+            // let blogs = await Blogs.find().populate('tags');
+            // blogs =  blogs.filter((blog)=>{
+            //     return blog.tags.some(t=>tagList.includes(t.tagName))
+            // })
+
+            // __________________technique 2 -- using tags and blogs model
+            tags = await Tags.find({tagName : {$in : tagList}});
+            let tagIds = tags.map(t=>t._id);
+            const blogs= await Blogs.find({tags : {$in : tagIds}});
+
+            // ________________technique 3 -- using Tags model and Set
+            // tags = await Tags.find({tagName : {$in : tagList}}).populate('blogs');
+            // const blogs = new Set();
+            // tags.forEach(async (t)=>{
+            //     await t.blogs.forEach( (b)=>{
+            //         blogs.add(b);
+            //     })
+            // })
+            // blogs = Array.from(blogs);
+
+
             // return blogs with success status code 200
             return res.status(200).send({
                 "success": true,
@@ -40,6 +59,7 @@ module.exports = class BlogController {
             })
 
         } catch (err) {
+            console.log(err);
             return res.status(500).send("Something went wrong");
         }
     }
@@ -61,19 +81,16 @@ module.exports = class BlogController {
             const filterOptions = {}; // used to store all filter options
 
             let user;
-            console.log(author);
             // if author is passed in req
             if (author) {
 
-                //finds author in Users table
+                //finds author
                 user = await Users.findOne({ name: author });
 
-                // if author present in Users table stores id of author in filteredOptions
+                // if author found
                 if (user) {
                     filterOptions.author = user._id;
                 } else {
-
-                    console.log("HIIIII");
 
                     return res.status(404).send({
                         "success": false,
@@ -102,7 +119,9 @@ module.exports = class BlogController {
 
                 // split tags using ',' and stored returned array in tagList
                 const tagList = tags.split(',');
-                filterOptions.$or = [{ tags: { $in: tagList } }]
+                tags = await Tags.find({tagName : {$in : tagList}});
+                const tagIds = tags.map(t=>t._id);
+                filterOptions.$or = [{ tags: { $in: tagIds } }]
             }
 
 
